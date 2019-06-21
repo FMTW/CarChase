@@ -3,7 +3,10 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - PlayerVehicle
+  - Parcel
+  - VehicleCargo
   layers:
   - Default
   - TransparentFX
@@ -24,7 +27,7 @@ TagManager:
   - 
   - 
   - 
-  - 
+  - Interactable
   - Player
   - Enemy
   - 
