@@ -8,8 +8,8 @@ public class CustomPlayerController : MonoBehaviour
 
     private Rigidbody rb;
 
-
-    #region Player Interaction Setting
+    #region Player Object Interaction Setting
+    [Header("Player Object Interaction Setting")]
     [SerializeField] private GameObject intereactionText;
     private Transform playerCameraTransform;
     private RaycastHit playerRaycastHit;
@@ -17,13 +17,15 @@ public class CustomPlayerController : MonoBehaviour
     public LayerMask m_IntereactableObject;
     [SerializeField] private string m_RaycastHitObjectTag;
 
-    #region Parcel Interaction Setting
+    #region Parcel Setting
+    [Header("Parcel Setting")]
     private bool m_IsPlayerHoldingParcel = false;
     private GameObject m_Parcel;
     [SerializeField] private Transform m_HeldItemPosition;
     #endregion
 
-    #region Vehicle Interaction Setting
+    #region Vehicle Setting
+    [Header("Vehicle Setting")]
     private bool m_IsPlayerInVehicle = false;
     private GameObject m_PlayerVehicle;
     private Transform m_DriverSeat;
