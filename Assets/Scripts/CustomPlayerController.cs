@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class CustomPlayerController : MonoBehaviour
 {
@@ -10,7 +11,7 @@ public class CustomPlayerController : MonoBehaviour
 
     #region Player Object Interaction Setting
     [Header("Player Object Interaction Setting")]
-    [SerializeField] private GameObject intereactionText;
+    [SerializeField] private GameObject m_IntereactionText;
     private Transform playerCameraTransform;
     private RaycastHit playerRaycastHit;
     [SerializeField] private float playerRaycastDistance = 2f;
@@ -21,6 +22,7 @@ public class CustomPlayerController : MonoBehaviour
     [Header("Parcel Setting")]
     private bool m_IsPlayerHoldingParcel = false;
     private GameObject m_Parcel;
+    [SerializeField] private GameObject m_AddressText;
     [SerializeField] private Transform m_HeldItemPosition;
     #endregion
 
@@ -44,14 +46,14 @@ public class CustomPlayerController : MonoBehaviour
         if (Physics.Raycast(playerCameraTransform.position, playerCameraTransform.TransformDirection(Vector3.forward), out playerRaycastHit, playerRaycastDistance, m_IntereactableObject))
         {
             Debug.DrawRay(playerCameraTransform.position, playerCameraTransform.TransformDirection(Vector3.forward) * playerRaycastHit.distance, Color.red);
-            intereactionText.SetActive(true);
+            m_IntereactionText.SetActive(true);
             m_RaycastHitObjectTag = playerRaycastHit.collider.transform.tag;
             
         }
         else
         {
             Debug.DrawRay(playerCameraTransform.position, playerCameraTransform.TransformDirection(Vector3.forward) * playerRaycastDistance, Color.green);
-            intereactionText.SetActive(false);
+            m_IntereactionText.SetActive(false);
             m_RaycastHitObjectTag = null;
         }
 
@@ -59,6 +61,10 @@ public class CustomPlayerController : MonoBehaviour
         {
             switch (m_RaycastHitObjectTag)
             {
+                case "PostOfficeDoor":
+                    ToggleDoorOpenClose();
+                    break;
+
                 case "PlayerVehicle":
                     m_PlayerVehicle = playerRaycastHit.transform.gameObject;
                     m_DriverSeat = m_PlayerVehicle.GetComponent<UnityStandardAssets.Vehicles.Car.CarUserControl>().GetDriverSeatTransform();
@@ -97,15 +103,30 @@ public class CustomPlayerController : MonoBehaviour
         }
     }
 
+    #region Toggle Door Open Close
+    private void ToggleDoorOpenClose()
+    {
+        Debug.Log("Door Opened");
+        playerRaycastHit.transform.gameObject.GetComponent<Animator>().SetTrigger("DoorOpen");
+    }
+
+    #endregion
+
     #region Pickup and Dropoff Parcel
     private void PickupParcel()
     {
         Debug.Log("Parcel picked up");
         m_IsPlayerHoldingParcel = true;
 
-        m_Parcel.GetComponent<Rigidbody>().isKinematic = true;
-        m_Parcel.transform.position = Vector3.Lerp(m_Parcel.transform.position, m_HeldItemPosition.position, 100);
-        m_Parcel.transform.SetParent(this.gameObject.transform);
+        #region Update Address Text UI
+        m_AddressText.GetComponent<TextMeshProUGUI>().SetText("Address: " + m_Parcel.GetComponent<Parcel>().GetAddress());
+        #endregion
+
+        m_Parcel.GetComponent<Parcel>().SetTargetPosition(m_HeldItemPosition);
+
+        //m_Parcel.GetComponent<Rigidbody>().isKinematic = true;
+        //m_Parcel.transform.position = Vector3.Lerp(m_Parcel.transform.position, m_HeldItemPosition.position, 1f);
+        //m_Parcel.transform.SetParent(this.gameObject.transform);
 
     }
 
@@ -114,8 +135,14 @@ public class CustomPlayerController : MonoBehaviour
         Debug.Log("Parcel dropped");
         m_IsPlayerHoldingParcel = false;
 
-        m_Parcel.GetComponent<Rigidbody>().isKinematic = false;
-        m_Parcel.transform.SetParent(null);
+        #region Set Address Text UI to empty
+        m_AddressText.GetComponent<TextMeshProUGUI>().SetText("Address: ");
+        #endregion
+
+        m_Parcel.GetComponent<Parcel>().SetTargetPosition(null);
+
+        //m_Parcel.GetComponent<Rigidbody>().isKinematic = false;
+        //m_Parcel.transform.SetParent(null);
     }
     #endregion
 

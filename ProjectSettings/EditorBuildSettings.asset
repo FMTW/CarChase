@@ -9,9 +9,6 @@ EditorBuildSettings:
     path: Assets/_Scenes/MainMenu.unity
     guid: 266a3946a63b4804b83e9f0d7969c63d
   - enabled: 1
-    path: Assets/_Scenes/LowPolyCityScene.unity
-    guid: c8bcf59d8a35ee04a8427baee80c5aef
-  - enabled: 0
-    path: 
-    guid: 00000000000000000000000000000000
+    path: Assets/_Scenes/GameScene.unity
+    guid: da7e596954cce874ab4ec0ef359d25fb
   m_configObjects: {}
