@@ -8,6 +8,7 @@ TagManager:
   - Parcel
   - VehicleCargo
   - PostOfficeDoor
+  - Vehicle Dealer
   layers:
   - Default
   - TransparentFX

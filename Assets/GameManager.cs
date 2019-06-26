@@ -12,7 +12,6 @@ public class GameManager : MonoBehaviour
 
     #region UI Variables
     [SerializeField] private TextMeshProUGUI m_FundText;
-
     #endregion
 
     #region Game Variables
@@ -41,14 +40,12 @@ public class GameManager : MonoBehaviour
     private void PauseGame()
     {
         Time.timeScale = 0;
-        Cursor.visible = true;
         m_PauseMenu.SetActive(true);
     }
 
     public void ResumeGame()
     {
         Time.timeScale = 1;
-        Cursor.visible = false;
         m_PauseMenu.SetActive(false);
 
     }
@@ -87,9 +84,26 @@ public class GameManager : MonoBehaviour
     public void CompleteDelivery(int _money)
     {
         Debug.Log("Delivery completed");
-        m_Fund += _money;
-
+        AddFund(_money);
         UpdateFund();
+    }
+
+    public void AddFund(int _fund)
+    {
+
+        m_Fund += _fund;
+        UpdateFund();
+    }
+
+    public void MinusFund(int _fund)
+    {
+        m_Fund -= _fund;
+        UpdateFund();
+    }
+
+    public int GetFund()
+    {
+        return m_Fund;
     }
 
     #endregion

@@ -33,12 +33,19 @@ public class CustomPlayerController : MonoBehaviour
     private Transform m_DriverSeat;
     #endregion
 
+    #region Shop Setting
+    private GameManager m_GameManager;
+    private int m_CarValue = 100;
+    [SerializeField] private GameObject m_Car;
     #endregion
-    
+
+    #endregion
+
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
         playerCameraTransform = Camera.main.transform;
+        m_GameManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameManager>();
     }
 
     private void Update()
@@ -46,8 +53,9 @@ public class CustomPlayerController : MonoBehaviour
         if (Physics.Raycast(playerCameraTransform.position, playerCameraTransform.TransformDirection(Vector3.forward), out playerRaycastHit, playerRaycastDistance, m_IntereactableObject))
         {
             Debug.DrawRay(playerCameraTransform.position, playerCameraTransform.TransformDirection(Vector3.forward) * playerRaycastHit.distance, Color.red);
-            m_IntereactionText.SetActive(true);
             m_RaycastHitObjectTag = playerRaycastHit.collider.transform.tag;
+            m_IntereactionText.SetActive(true);
+            m_IntereactionText.GetComponent<TextMeshProUGUI>().SetText("Press 'E' to interect with " + m_RaycastHitObjectTag);
             
         }
         else
@@ -96,6 +104,10 @@ public class CustomPlayerController : MonoBehaviour
                     }
                     break;
 
+                case "Vehicle Dealer":
+                    PurchaseVehicle();
+                    break;
+
                 default:
                     Debug.Log("No matched interaction found.");
                     break;
@@ -122,11 +134,11 @@ public class CustomPlayerController : MonoBehaviour
         m_AddressText.GetComponent<TextMeshProUGUI>().SetText("Address: " + m_Parcel.GetComponent<Parcel>().GetAddress());
         #endregion
 
-        m_Parcel.GetComponent<Parcel>().SetTargetPosition(m_HeldItemPosition);
+        //m_Parcel.GetComponent<Parcel>().SetTargetPosition(m_HeldItemPosition);
 
-        //m_Parcel.GetComponent<Rigidbody>().isKinematic = true;
-        //m_Parcel.transform.position = Vector3.Lerp(m_Parcel.transform.position, m_HeldItemPosition.position, 1f);
-        //m_Parcel.transform.SetParent(this.gameObject.transform);
+        m_Parcel.GetComponent<Rigidbody>().isKinematic = true;
+        m_Parcel.transform.position = m_HeldItemPosition.position;
+        m_Parcel.transform.SetParent(this.gameObject.transform);
 
     }
 
@@ -139,10 +151,10 @@ public class CustomPlayerController : MonoBehaviour
         m_AddressText.GetComponent<TextMeshProUGUI>().SetText("Address: ");
         #endregion
 
-        m_Parcel.GetComponent<Parcel>().SetTargetPosition(null);
+        //m_Parcel.GetComponent<Parcel>().SetTargetPosition(null);
 
-        //m_Parcel.GetComponent<Rigidbody>().isKinematic = false;
-        //m_Parcel.transform.SetParent(null);
+        m_Parcel.GetComponent<Rigidbody>().isKinematic = false;
+        m_Parcel.transform.SetParent(null);
     }
     #endregion
 
@@ -184,6 +196,18 @@ public class CustomPlayerController : MonoBehaviour
         #region Do stuffs to playerVehicle
         m_PlayerVehicle.GetComponent<UnityStandardAssets.Vehicles.Car.CarUserControl>().ToggleDrivable();       // Diable playerVehicle drivable
         #endregion
+    }
+    #endregion
+
+    #region
+    private void PurchaseVehicle()
+    {
+        if (m_GameManager.GetFund() >= m_CarValue && !m_Car.activeSelf)
+        {
+            Debug.Log("Vehicle Purchased");
+            m_GameManager.MinusFund(m_CarValue);
+            m_Car.SetActive(true);
+        }
     }
     #endregion
 }
